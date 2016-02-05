@@ -104,8 +104,8 @@ function appViewModel() {
             if(array[i].dealTags[j].name.toLowerCase().indexOf(searchWord) != -1) {
               self.mapMarkers()[i].marker.setMap(map);
               self.filteredList.push(array[i]);
-          //otherwise hide all other markers from the map
-          } else {
+            //otherwise hide all other markers from the map
+            } else {
               self.mapMarkers()[i].marker.setMap(null);
             }
           }
@@ -225,7 +225,7 @@ function appViewModel() {
         self.searchStatus('');
         self.loadImg('');
       },
-      error: function() {
+      fail: function() {
         self.dealStatus('Oops, something went wrong, please refresh and try again.');
         self.loadImg('');
       }
@@ -251,7 +251,8 @@ function appViewModel() {
       var marker = new google.maps.Marker({
         position: geoLoc,
         title: thisRestaurant,
-        map: map
+        map: map,
+        animation: google.maps.Animation.DROP
       });
 
       self.mapMarkers.push({marker: marker, content: contentString});
@@ -266,6 +267,11 @@ function appViewModel() {
          map.setCenter(marker.position);
          infowindow.open(map, marker);
          map.panBy(0, -150);
+         if (marker.getAnimation() !== null) {
+           marker.setAnimation(null);
+         } else {
+           marker.setAnimation(google.maps.Animation.BOUNCE);
+         }
        });
     });
   }
