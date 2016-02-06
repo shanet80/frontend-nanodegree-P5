@@ -1,4 +1,10 @@
-html, body, #map-canvas{
+html{
+  height:100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map-canvas{
   height:100%;
   margin: 0;
   padding: 0;
@@ -22,6 +28,9 @@ html, body, #map-canvas{
 }
 
 body {
+  height:100%;
+  margin: 0;
+  padding: 0;
   position: relative;
   font-size: 14px;
 }

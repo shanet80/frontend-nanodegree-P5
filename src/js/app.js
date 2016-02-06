@@ -95,7 +95,7 @@ function appViewModel() {
       //Loop through the grouponDeals array and see if the search keyword matches
       //with any venue name or dealTags in the list, if so push that object to the filteredList
       //array and place the marker on the map.
-      for(var i=0; i < array.length; i++) {
+      for(var i=0, len= array.length; i < len; i++) {
         if(array[i].dealName.toLowerCase().indexOf(searchWord) != -1) {
           self.mapMarkers()[i].marker.setMap(map);
           self.filteredList.push(array[i]);
@@ -175,60 +175,60 @@ function appViewModel() {
 
     $.ajax({
       url: grouponUrl + divId,
-      dataType: 'jsonp',
-      success: function(data) {
-        console.log(data);
-        var len = data.deals.length;
-        for(var i = 0; i < len; i++) {
-          var venueLocation = data.deals[i].options[0].redemptionLocations[0];
+      dataType: 'jsonp'
+    })
+    .done(function(data) {
+      console.log(data);
+      var len = data.deals.length;
+      for(var i = 0; i < len; i++) {
+        var venueLocation = data.deals[i].options[0].redemptionLocations[0];
 
-            //this line filters out deals that don't have a physical location to redeem
-            if (data.deals[i].options[0].redemptionLocations[0] === undefined) continue;
-          var venueName = data.deals[i].merchant.name;
-              venueLat = venueLocation.lat,
-              venueLon = venueLocation.lng,
-              gLink = data.deals[i].dealUrl,
-              gImg = data.deals[i].mediumImageUrl,
-              blurb = data.deals[i].pitchHtml,
-              address = venueLocation.streetAddress1,
-              city = venueLocation.city,
-              state = venueLocation.state,
-              zip = venueLocation.postalCode,
-              shortBlurb = data.deals[i].announcementTitle,
-              tags = data.deals[i].tags;
+          //this line filters out deals that don't have a physical location to redeem
+          if (data.deals[i].options[0].redemptionLocations[0] === undefined) continue;
+        var venueName = data.deals[i].merchant.name;
+            venueLat = venueLocation.lat,
+            venueLon = venueLocation.lng,
+            gLink = data.deals[i].dealUrl,
+            gImg = data.deals[i].mediumImageUrl,
+            blurb = data.deals[i].pitchHtml,
+            address = venueLocation.streetAddress1,
+            city = venueLocation.city,
+            state = venueLocation.state,
+            zip = venueLocation.postalCode,
+            shortBlurb = data.deals[i].announcementTitle,
+            tags = data.deals[i].tags;
 
-          // Handles error if no Yelp rating available
-          var rating;
-          if((data.deals[i].merchant.ratings == null) || data.deals[i].merchant.ratings[0] === undefined ) { rating = '';
-          } else {
-            var num = data.deals[i].merchant.ratings[0].rating;
-            var decimal = num.toFixed(1);
-            rating = '<img src="img/burst_tiny.png"> ' + decimal + ' <span>out of 5</span>';
-          }
-
-          self.grouponDeals.push({
-            dealName: venueName,
-            dealLat: venueLat,
-            dealLon: venueLon,
-            dealLink: gLink,
-            dealImg: gImg,
-            dealBlurb: blurb,
-            dealAddress: address + "<br>" + city + ", " + state + " " + zip,
-            dealShortBlurb: shortBlurb,
-            dealRating: rating,
-            dealTags: tags
-          });
-
+        // Handles error if no Yelp rating available
+        var rating;
+        if((data.deals[i].merchant.ratings === null) || data.deals[i].merchant.ratings[0] === undefined ) { rating = '';
+        } else {
+          var num = data.deals[i].merchant.ratings[0].rating;
+          var decimal = num.toFixed(1);
+          rating = '<img src="img/burst_tiny.png"> ' + decimal + ' <span>out of 5</span>';
         }
-        self.filteredList(self.grouponDeals());
-        mapMarkers(self.grouponDeals());
-        self.searchStatus('');
-        self.loadImg('');
-      },
-      fail: function() {
-        self.dealStatus('Oops, something went wrong, please refresh and try again.');
-        self.loadImg('');
+
+        self.grouponDeals.push({
+          dealName: venueName,
+          dealLat: venueLat,
+          dealLon: venueLon,
+          dealLink: gLink,
+          dealImg: gImg,
+          dealBlurb: blurb,
+          dealAddress: address + "<br>" + city + ", " + state + " " + zip,
+          dealShortBlurb: shortBlurb,
+          dealRating: rating,
+          dealTags: tags
+        });
+
       }
+      self.filteredList(self.grouponDeals());
+      mapMarkers(self.grouponDeals());
+      self.searchStatus('');
+      self.loadImg('');
+    })
+    .fail(function() {
+      self.dealStatus('Oops, something went wrong, please refresh and try again.');
+      self.loadImg('');
     });
   }
 
@@ -293,8 +293,9 @@ function appViewModel() {
   function getGrouponLocations() {
     $.ajax({
       url: 'https://partner-api.groupon.com/division.json',
-      dataType: 'jsonp',
-      success: function(data) {
+      dataType: 'jsonp'
+    })
+      .done(function(data) {
         grouponLocations = data;
         for(var i = 0; i < 171; i++) {
           var readableName = data.divisions[i].name;
@@ -306,12 +307,11 @@ function appViewModel() {
           showNoSuggestionNotice: true,
           noSuggestionNotice: 'Sorry, no matching results',
         });
-      },
-      error: function() {
+      })
+      .fail(function() {
         self.dealStatus('Oops, something went wrong, please reload the page and try again.');
         self.loadImg('');
-      }
-    });
+      });
   }
 
 
