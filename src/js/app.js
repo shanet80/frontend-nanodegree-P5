@@ -31,14 +31,16 @@ function appViewModel() {
   this.goToMarker = function(clickedDeal) {
     var clickedDealName = clickedDeal.dealName;
     for(var key in self.mapMarkers()) {
-      if(clickedDealName === self.mapMarkers()[key].marker.title) {
+      var selectedMarker = self.mapMarkers()[key];
+      if(clickedDealName === selectedMarker.marker.title) {
         map.panTo(self.mapMarkers()[key].marker.position);
         map.setZoom(14);
-        infowindow.setContent(self.mapMarkers()[key].content);
-        infowindow.open(map, self.mapMarkers()[key].marker);
+        infowindow.setContent(selectedMarker.content);
+        infowindow.open(map, selectedMarker.marker);
         map.panBy(0, -150);
         self.mobileShow(false);
         self.searchStatus('');
+        selectedMarker.marker.setAnimation(google.maps.Animation.DROP);
       }
     }
   };
@@ -271,7 +273,7 @@ function appViewModel() {
            marker.setAnimation(null);
          } else {
            marker.setAnimation(google.maps.Animation.BOUNCE);
-           setTimeout(function(){ marker.setAnimation(null); }, 750);
+           setTimeout(function(){ marker.setAnimation(null); }, 1400);
          }
        });
     });
